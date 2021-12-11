@@ -1,3 +1,8 @@
+package cs5004.animator.model;
+
+import cs5004.animator.util.AnimationBuilder;
+import java.awt.Color;
+
 public class Rectangle extends ShapeAbstraction implements Shape {
 
   private double width;

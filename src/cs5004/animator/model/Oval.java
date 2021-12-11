@@ -1,3 +1,7 @@
+package cs5004.animator.model;
+
+import java.awt.Color;
+
 public class Oval extends ShapeAbstraction implements Shape {
 
   private double radiusX;

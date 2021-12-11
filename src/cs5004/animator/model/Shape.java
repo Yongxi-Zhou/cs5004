@@ -1,3 +1,7 @@
+package cs5004.animator.model;
+
+import java.awt.Color;
+
 /**
  * This interface contains all operations that all types of shapes should support.
  */
