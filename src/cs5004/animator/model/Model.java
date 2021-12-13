@@ -3,15 +3,19 @@ package cs5004.animator.model;
 import cs5004.animator.util.AnimationBuilder;
 import java.awt.Color;
 import java.util.ArrayList;
-import java.util.HashMap;
 
 public class Model implements IModel {
 
   private static Canvas canvasBuilder;
-  private static ArrayList<Shape> shapes = new ArrayList<>();
+  private static ArrayList<Shape> shapesBuilder = new ArrayList<>();
+
+  private Canvas canvas;
+  private ArrayList<Shape> shapes;
+
 
   public Model() {
-
+    canvas = canvasBuilder;
+    shapes = shapesBuilder;
   }
 
 
@@ -23,7 +27,7 @@ public class Model implements IModel {
     @Override
     public IModel build() {
       System.out.println("build");
-      System.out.println(shapes.toString());
+      System.out.println(shapesBuilder.toString());
       return null;
     }
 
@@ -44,7 +48,7 @@ public class Model implements IModel {
         shapeBuilder = new Oval(name);
       }
 
-      shapes.add(shapeBuilder);
+      shapesBuilder.add(shapeBuilder);
       animationList = new ArrayList<>();
       shapeBuilder.setAnimationList(animationList);
 
@@ -79,22 +83,8 @@ public class Model implements IModel {
   }
 
   @Override
-  public HashMap getData() {
-    return null;
+  public ArrayList<Shape> getShapes() {
+    return shapes;
   }
 
-  @Override
-  public boolean isMove() {
-    return false;
-  }
-
-  @Override
-  public boolean isChangeColor() {
-    return false;
-  }
-
-  @Override
-  public boolean isScale() {
-    return false;
-  }
 }

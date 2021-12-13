@@ -1,27 +1,22 @@
 package cs5004.animator.view;
 
+import cs5004.animator.controller.Controller;
+
+import cs5004.animator.model.Point;
+import cs5004.animator.model.ShapeType;
 import java.awt.Color;
 import java.awt.event.ActionListener;
 
 public interface IView {
-  void setActionListener(ActionListener actionListener);
-  int getStartShapeTime();
+  void setListeners(ActionListener e);
 
-  int getStartShapeX();
+  void setCanvas(int locationX, int locationY, int canvasWidth, int canvasHeight);
 
-  int getStartShapeY();
+  void run(int startTime, Point startPoint, int startWidth, int startHeight, Color startColor,
+      int endTime, Point endPoint, int endWidth, int endHeight, Color endColor,
+      ActionListener e);
 
-  int getStartShapeWidth();
+  void setTimer(int duration, ActionListener e);
 
-  int getStartShapeHeight();
-
-  Color getStartShapeColor();
-
-  int getEndShapeTime();
-
-  int getEndShapeX();
-  int getEndShapeY();
-  int getEndShapeWidth();
-  int getEndShapeHeight();
-  Color getEndShapeColor();
+  void init(Point point, int width, int height, Color color, ShapeType type);
 }

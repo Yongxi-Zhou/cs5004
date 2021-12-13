@@ -1,16 +1,11 @@
 package cs5004.animator.model;
 
-import java.util.HashMap;
+import java.util.ArrayList;
 
 public interface IModel {
 
   Canvas getCanvas();
 
-  HashMap getData();
+  ArrayList<Shape> getShapes();
 
-  boolean isMove();
-
-  boolean isChangeColor();
-
-  boolean isScale();
 }
