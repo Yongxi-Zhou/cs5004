@@ -22,7 +22,7 @@ public class PaintPanel extends JPanel implements Feature {
   private int curHeight;
   private Color curColor;
   private ShapeType type;
-  final int RENDERTIMES = 100;
+  final int RENDERTIMES = 25;
 
   public PaintPanel() {
 
@@ -35,21 +35,19 @@ public class PaintPanel extends JPanel implements Feature {
     super.paintComponent(g);
     System.out.println("paint");
     g.setColor(curColor);
-    g.fillRect(curX, curY, curWidth, curHeight);
+    if (type.equals(ShapeType.RECTANGLE)) {
+      g.fillRect(curX, curY, curWidth, curHeight);
+    } else if (type.equals(ShapeType.OVAL)) {
+      g.fillOval(curX, curY, curWidth, curHeight);
+    }
 
-    tm.start();
   }
 
-//  public void runAnimation() {
-//    if (x <0 || x > 550) {
-//      velX = -velX;
-//    }
-//    x = x + velX;
-//    repaint();
-//  }
 
   public void setTimer(int duration, ActionListener timer) {
-    tm = new Timer(duration * 1000 / RENDERTIMES, timer);
+    System.out.println("setTimer");
+    tm = new Timer(duration  / RENDERTIMES, timer);
+    tm.start();
   }
 
 
@@ -58,19 +56,34 @@ public class PaintPanel extends JPanel implements Feature {
       int endWidth,
       int endHeight, Color endColor, ActionListener timer) {
 
-    if ((curX <= endPoint.getX() && curY <= endPoint.getY()) && (
+    if ((Math.abs(curX - endPoint.getX()) > 0.01 || Math.abs(curY - endPoint.getY()) > 0.01) && (
         startPoint.getX() != endPoint.getX() || startPoint.getY() != endPoint.getY())) {
       this.move(startPoint, endPoint, endTime - startTime);
     }
-    if ((curWidth <= endWidth && curHeight <= endHeight) && (startWidth != endWidth
-        || startHeight != endHeight)) {
+
+    if ((Math.abs(curWidth - endWidth) > 0.01 || Math.abs(curHeight - endHeight) > 0.01) && (
+        startWidth != endWidth
+            || startHeight != endHeight)) {
       this.scale(startWidth, startHeight, endWidth, endHeight, endTime - startTime);
     }
-    if (!startColor.equals(endColor)) {
+
+    if ((Math.abs(curColor.getRed() - endColor.getRed()) > 0.01
+        || Math.abs(curColor.getGreen() - endColor.getGreen()) > 0.01
+        || Math.abs(curColor.getBlue() - endColor.getBlue()) > 0.01) && (!startColor.equals(
+        endColor))) {
       this.changeColor(startColor, endColor, endTime - startTime);
-      if (curColor.equals(endColor)) {
-        tm.removeActionListener(timer);
-      }
+    }
+
+    // remove timer
+    if ((Math.abs(curX - endPoint.getX()) <= 0.01 && Math.abs(curY - endPoint.getY()) <= 0.01) && (
+        Math.abs(curWidth - endWidth) <= 0.01 && Math.abs(curHeight - endHeight) <= 0.01) && (
+        Math.abs(curColor.getRed() - endColor.getRed()) <= 0.01
+            && Math.abs(curColor.getGreen() - endColor.getGreen()) <= 0.01
+            && Math.abs(curColor.getBlue() - endColor.getBlue()) <= 0.01)) {
+      System.out.println("stop");
+      tm.removeActionListener(timer);
+      tm.stop();
+      System.out.println(tm.isRunning());
     }
 
   }
@@ -78,10 +91,24 @@ public class PaintPanel extends JPanel implements Feature {
   @Override
   public void changeColor(Color startColor, Color endColor, int duration) {
     System.out.println("changeColor");
-    int red = curColor.getRed() + ((endColor.getRed() - startColor.getRed()) / RENDERTIMES);
-    int green = curColor.getGreen() + ((endColor.getGreen() - startColor.getGreen()) / RENDERTIMES);
-    int blue = curColor.getBlue() + ((endColor.getBlue() - startColor.getBlue()) / RENDERTIMES);
-    curColor = new Color(red, green, blue);
+
+    int red = (curColor.getRed() + ((endColor.getRed() - startColor.getRed()) / RENDERTIMES)) < 0 ? 0
+        : curColor.getRed() + ((endColor.getRed() - startColor.getRed()) / RENDERTIMES);
+    red = red > 255 ? 255 : red;
+    int green =
+        (curColor.getGreen() + ((endColor.getGreen() - startColor.getGreen()) / RENDERTIMES)) < 0 ? 0
+            : curColor.getGreen() + ((endColor.getGreen() - startColor.getGreen()) / RENDERTIMES);
+    green = green > 255 ? 255 : green;
+    int blue =
+        (curColor.getBlue() + ((endColor.getBlue() - startColor.getBlue()) / RENDERTIMES)) < 0 ? 0
+            : curColor.getBlue() + ((endColor.getBlue() - startColor.getBlue()) / RENDERTIMES);
+    blue = blue > 255 ? 255 : blue;
+
+    System.out.println(red);
+    System.out.println(green);
+    System.out.println(blue);
+    curColor = new Color(red,green,blue);
+    repaint();
   }
 
   @Override
@@ -95,9 +122,15 @@ public class PaintPanel extends JPanel implements Feature {
 
   @Override
   public void move(Point startPoint, Point endPoint, int dur) {
-    curX += (endPoint.getX() - startPoint.getX()) / (RENDERTIMES);
-    curY += (endPoint.getY() - endPoint.getY()) / (RENDERTIMES);
-    repaint();
+    if (curX < endPoint.getX() || curY < endPoint.getY()) {
+      System.out.println(curX);
+      curX += (endPoint.getX() - startPoint.getX()) / (RENDERTIMES);
+      curY += (endPoint.getY() - startPoint.getY()) / (RENDERTIMES);
+      System.out.println(curX);
+      System.out.println(curY);
+      repaint();
+    }
+
   }
 
   public void paintTest(Point point, int width, int height, Color color, ShapeType type) {
@@ -107,5 +140,6 @@ public class PaintPanel extends JPanel implements Feature {
     curHeight = height;
     curColor = color;
     this.type = type;
+
   }
 }

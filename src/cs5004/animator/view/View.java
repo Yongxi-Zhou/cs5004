@@ -3,15 +3,20 @@ package cs5004.animator.view;
 import cs5004.animator.controller.Controller;
 import cs5004.animator.model.Point;
 import cs5004.animator.model.ShapeType;
+import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
 import java.awt.event.ActionListener;
 import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.JScrollPane;
 
 public class View extends JFrame implements IView {
 
   private JButton pauseButton, exitButton;
   private PaintPanel paintPanel;
+  private JScrollPane scrollPane;
 
   public View(String caption) {
     super(caption);
@@ -32,7 +37,10 @@ public class View extends JFrame implements IView {
 //    this.add(exitButton);
 
     paintPanel = new PaintPanel();
-    this.add(paintPanel);
+    paintPanel.setPreferredSize(new Dimension(800, 910));
+    scrollPane = new JScrollPane(paintPanel, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
+        JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
+    this.add(scrollPane, BorderLayout.CENTER);
 
     setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     setVisible(true);
@@ -49,7 +57,8 @@ public class View extends JFrame implements IView {
   public void run(int startTime, Point startPoint, int startWidth, int startHeight,
       Color startColor, int endTime, Point endPoint, int endWidth, int endHeight, Color endColor,
       ActionListener timer) {
-    paintPanel.runAnimation(startTime, startPoint, startWidth, startHeight, startColor, endTime, endPoint,
+    paintPanel.runAnimation(startTime, startPoint, startWidth, startHeight, startColor, endTime,
+        endPoint,
         endWidth, endHeight, endColor, timer);
   }
 

@@ -18,6 +18,19 @@ public class Controller implements ActionListener {
   private IModel model;
   private IView view;
 
+  private int startTime;
+  private int endTime;
+  private Point startPoint;
+  private Point endPoint;
+  private Color startColor;
+  private Color endColor;
+  private int startWidth;
+  private int endWidth;
+  private int startHeight;
+  private int endHeight;
+  private ShapeType type;
+
+
   public Controller(IModel m, IView v) {
     this.model = m;
     this.view = v;
@@ -35,58 +48,59 @@ public class Controller implements ActionListener {
 
   private void runAnimation() {
     ArrayList<Shape> shapes = model.getShapes();
-//    for (Shape shape : shapes) {
-//      ShapeType type = shape.getType();
-//      ArrayList<ShapeSection> animationList = shape.getAnimationList();
-//      for (ShapeSection section : animationList) {
-//        ShapeState start = section.getStart();
-//        ShapeState end = section.getEnd();
-//
-//        int startTime = start.getTick();
-//        int endTime = end.getTick();
-//
-//        view.setTimer((endTime - startTime) ,this);
-//
-//      }
-//    }
-    view.setTimer(5, this);
-    view.init(new Point(20, 20), 50, 50, Color.BLUE, ShapeType.RECTANGLE);
+    for (Shape shape : shapes) {
+      type = shape.getType();
+      ArrayList<ShapeSection> animationList = shape.getAnimationList();
+      for (ShapeSection section : animationList) {
+        ShapeState start = section.getStart();
+        ShapeState end = section.getEnd();
+
+        startTime = start.getTick();
+        endTime = end.getTick();
+
+        startPoint = start.getMinCorner();
+        endPoint = end.getMinCorner();
+
+        startColor = start.getColor();
+        endColor = end.getColor();
+
+        startWidth = start.getWidth();
+        endWidth = end.getWidth();
+
+        startHeight = start.getHeight();
+        endHeight = end.getHeight();
+
+        view.setTimer((endTime - startTime) * 100, this);
+        view.init(new Point(startPoint.getX(), startPoint.getY()), startWidth, startHeight,
+            startColor, type);
+        System.out.println("endTime: " + endTime);
+        System.out.println("startTime: " + startTime);
+        try {
+          Thread.sleep((endTime - startTime) * 100);
+        } catch (InterruptedException e) {
+          e.printStackTrace();
+        }
+      }
+    }
+//    view.setTimer(5, this);
+//    view.init(new Point(20, 20), 50, 50, Color.BLUE, ShapeType.OVAL);
   }
 
   @Override
   public void actionPerformed(ActionEvent e) {
 
-//    ArrayList<Shape> shapes = model.getShapes();
-//    for (Shape shape : shapes) {
-//      ShapeType type = shape.getType();
-//      ArrayList<ShapeSection> animationList = shape.getAnimationList();
-//      for (ShapeSection section : animationList) {
-//        ShapeState start = section.getStart();
-//        ShapeState end = section.getEnd();
-//
-//        int startTime = start.getTick();
-//        int endTime = end.getTick();
-//
-//        Point startPoint = start.getMinCorner();
-//        Point endPoint = end.getMinCorner();
-//
-//        Color startColor = start.getColor();
-//        Color endColor = end.getColor();
-//
-//        int startWidth = start.getWidth();
-//        int endWidth = end.getWidth();
-//
-//        int startHeight = start.getHeight();
-//        int endHeight = end.getHeight();
-//
-//        view.run(startTime, startPoint, startWidth, startHeight, startColor, endTime, endPoint,
-//            endWidth, endHeight, endColor, this);
-//      }
-//    }
+    System.out.println(startTime);
+    System.out.println(endTime);
+//    System.out.println(startPoint.getX());
+//    System.out.println(endPoint.getX());
+//    System.out.println(startHeight);
+//    System.out.println(endHeight);
+    System.out.println("actionPerform!!!");
+    view.run(startTime, startPoint, startWidth, startHeight, startColor, endTime, endPoint,
+        endWidth, endHeight, endColor, this);
 
-    view.run(0, new Point(20, 20), 50, 50, Color.BLUE, 5, new Point(200, 200),
-        200, 200, Color.RED, this);
-
+//    view.run(0, new Point(20, 20), 50, 50, Color.BLUE, 5, new Point(200, 200),
+//        200, 200, Color.RED, this);
 
   }
 }
