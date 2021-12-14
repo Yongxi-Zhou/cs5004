@@ -7,16 +7,22 @@ import cs5004.animator.model.Shape;
 import cs5004.animator.model.ShapeSection;
 import cs5004.animator.model.ShapeState;
 import cs5004.animator.model.ShapeType;
+import cs5004.animator.view.IVisualView;
 import cs5004.animator.view.IView;
+import cs5004.animator.view.PaintPanel;
+import cs5004.animator.view.TextView;
+import cs5004.animator.view.VisualView;
 import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
+import javax.swing.Timer;
 
 public class Controller implements ActionListener {
 
   private IModel model;
-  private IView view;
+  private VisualView view;
+  private TextView txtView;
 
   private int startTime;
   private int endTime;
@@ -29,11 +35,16 @@ public class Controller implements ActionListener {
   private int startHeight;
   private int endHeight;
   private ShapeType type;
+  private String name;
+  private ActionListener taskPerformer;
+
+  private Timer tm;
 
 
-  public Controller(IModel m, IView v) {
+  public Controller(IModel m, VisualView v, TextView txtView) {
     this.model = m;
     this.view = v;
+    this.txtView = txtView;
     // set listeners
     view.setListeners(this);
     // set canvas
@@ -43,12 +54,45 @@ public class Controller implements ActionListener {
     int canvasWidth = canvas.getWidth();
     int canvasHeight = canvas.getHeight();
     view.setCanvas(locationX, locationY, canvasWidth, canvasHeight);
-    runAnimation();
+
+    this.runAnimation();
+  }
+
+
+  private void appear() {
+    ArrayList<Shape> shapes = model.getShapes();
+    for (Shape shape : shapes) {
+      String name = shape.getName();
+      ArrayList<ShapeSection> animationList = shape.getAnimationList();
+      int len = animationList.size();
+      ShapeState start = animationList.get(0).getStart();
+      ShapeState end = animationList.get(len - 1).getEnd();
+      int startTime = start.getTick();
+      int endTime = end.getTick();
+      txtView.appear(name, startTime, endTime);
+    }
+  }
+
+  private void create() {
+    ArrayList<Shape> shapes = model.getShapes();
+    for (Shape shape : shapes) {
+      String name = shape.getName();
+      ShapeType type = shape.getType();
+      ArrayList<ShapeSection> animationList = shape.getAnimationList();
+      ShapeState start = animationList.get(0).getStart();
+      Color startColor = start.getColor();
+      Point startCorner = start.getMinCorner();
+      int startWidth = start.getWidth();
+      int startHeight = start.getHeight();
+
+      txtView.create(startColor, type, name, startCorner, startWidth, startHeight);
+    }
   }
 
   private void runAnimation() {
     ArrayList<Shape> shapes = model.getShapes();
     for (Shape shape : shapes) {
+      name = shape.getName();
       type = shape.getType();
       ArrayList<ShapeSection> animationList = shape.getAnimationList();
       for (ShapeSection section : animationList) {
@@ -70,11 +114,25 @@ public class Controller implements ActionListener {
         startHeight = start.getHeight();
         endHeight = end.getHeight();
 
-        view.setTimer((endTime - startTime) * 100, this);
+        taskPerformer = evt -> {
+          view.run(startTime, startPoint, startWidth, startHeight, startColor, endTime, endPoint,
+              endWidth, endHeight, endColor, this);
+          txtView.run(startTime, startPoint, startWidth, startHeight, startColor, endTime, endPoint,
+              endWidth, endHeight, endColor, name);
+        };
+        tm = new Timer((endTime - startTime) * 100 / PaintPanel.RENDERTIMES, taskPerformer);
+        tm.start();
+
+        this.create();
+        this.appear();
         view.init(new Point(startPoint.getX(), startPoint.getY()), startWidth, startHeight,
             startColor, type);
-        System.out.println("endTime: " + endTime);
-        System.out.println("startTime: " + startTime);
+
+        if (view.isFinish(endPoint, endWidth, endHeight, endColor)) {
+          tm.stop();
+          tm.removeActionListener(taskPerformer);
+          System.out.println("finish!!!!");
+        }
         try {
           Thread.sleep((endTime - startTime) * 100);
         } catch (InterruptedException e) {
@@ -82,25 +140,24 @@ public class Controller implements ActionListener {
         }
       }
     }
-//    view.setTimer(5, this);
-//    view.init(new Point(20, 20), 50, 50, Color.BLUE, ShapeType.OVAL);
   }
 
   @Override
   public void actionPerformed(ActionEvent e) {
 
-    System.out.println(startTime);
-    System.out.println(endTime);
-//    System.out.println(startPoint.getX());
-//    System.out.println(endPoint.getX());
-//    System.out.println(startHeight);
-//    System.out.println(endHeight);
-    System.out.println("actionPerform!!!");
-    view.run(startTime, startPoint, startWidth, startHeight, startColor, endTime, endPoint,
-        endWidth, endHeight, endColor, this);
-
-//    view.run(0, new Point(20, 20), 50, 50, Color.BLUE, 5, new Point(200, 200),
-//        200, 200, Color.RED, this);
+    switch (e.getActionCommand()) {
+      case "Start Button":
+        System.out.println("start!!");
+        tm.restart();
+        break;
+      case "Pause Button":
+        tm.stop();
+        tm.removeActionListener(taskPerformer);
+        break;
+      case "Exit Button":
+        System.exit(0);
+        break;
+    }
 
   }
 }
