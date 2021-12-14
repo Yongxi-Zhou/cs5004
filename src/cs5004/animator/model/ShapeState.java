@@ -78,6 +78,7 @@ public class ShapeState {
 
   /**
    * Return the string of the shape in this shapeState.
+   *
    * @return the string of the shape in this shapeState.
    */
   @Override

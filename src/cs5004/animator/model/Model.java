@@ -4,6 +4,9 @@ import cs5004.animator.util.AnimationBuilder;
 import java.awt.Color;
 import java.util.ArrayList;
 
+/**
+ * This class represents model object, including canvas and shape list.
+ */
 public class Model implements IModel {
 
   private static Canvas canvasBuilder;
@@ -12,13 +15,17 @@ public class Model implements IModel {
   private Canvas canvas;
   private ArrayList<Shape> shapes;
 
-
+  /**
+   * Construct a model object and pass parameters from the file.
+   */
   public Model() {
     canvas = canvasBuilder;
     shapes = shapesBuilder;
   }
 
-
+  /**
+   * This class to save parameters from the reading file.
+   */
   public static final class Builder implements AnimationBuilder<IModel> {
 
     private Shape shapeBuilder;
@@ -63,10 +70,10 @@ public class Model implements IModel {
         int r1, int g1, int b1, int t2, int x2, int y2, int w2, int h2, int r2, int g2, int b2) {
       System.out.println("time:" + t1);
 
-      ShapeState startState = new ShapeState(t1,new Point(x1, y1), w1, h1, new Color(r1, g1, b1) );
+      ShapeState startState = new ShapeState(t1, new Point(x1, y1), w1, h1, new Color(r1, g1, b1));
 
       System.out.println("time:" + t2);
-      ShapeState endState = new ShapeState(t2,new Point(x2, y2), w2, h2, new Color(r2, g2, b2) );
+      ShapeState endState = new ShapeState(t2, new Point(x2, y2), w2, h2, new Color(r2, g2, b2));
 
       animationList.add(new ShapeSection(startState, endState));
 
@@ -76,12 +83,22 @@ public class Model implements IModel {
     }
   }
 
-
+  /**
+   * Return the canvas parameters of this model.
+   *
+   * @return the canvas parameters of this model.
+   */
   @Override
   public Canvas getCanvas() {
     return canvasBuilder;
   }
 
+
+  /**
+   * Return the shape list of this model.
+   *
+   * @return the shape list of this model.
+   */
   @Override
   public ArrayList<Shape> getShapes() {
     return shapes;

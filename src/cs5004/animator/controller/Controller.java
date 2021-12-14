@@ -7,8 +7,6 @@ import cs5004.animator.model.Shape;
 import cs5004.animator.model.ShapeSection;
 import cs5004.animator.model.ShapeState;
 import cs5004.animator.model.ShapeType;
-import cs5004.animator.view.IVisualView;
-import cs5004.animator.view.IView;
 import cs5004.animator.view.PaintPanel;
 import cs5004.animator.view.TextView;
 import cs5004.animator.view.VisualView;
@@ -18,6 +16,9 @@ import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import javax.swing.Timer;
 
+/**
+ * This class represents controller.
+ */
 public class Controller implements ActionListener {
 
   private IModel model;
@@ -39,8 +40,15 @@ public class Controller implements ActionListener {
   private ActionListener taskPerformer;
 
   private Timer tm;
+  private int duration;
 
-
+  /**
+   * Constructs a controller with given model and views.
+   *
+   * @param m       the model given to construct the controller
+   * @param v       the visual view given to construct the controller
+   * @param txtView the text view given to construct the controller
+   */
   public Controller(IModel m, VisualView v, TextView txtView) {
     this.model = m;
     this.view = v;
@@ -58,7 +66,9 @@ public class Controller implements ActionListener {
     this.runAnimation();
   }
 
-
+  /**
+   * Control the model and view to appear.
+   */
   private void appear() {
     ArrayList<Shape> shapes = model.getShapes();
     for (Shape shape : shapes) {
@@ -73,6 +83,10 @@ public class Controller implements ActionListener {
     }
   }
 
+
+  /**
+   * Control the model and view to create animation.
+   */
   private void create() {
     ArrayList<Shape> shapes = model.getShapes();
     for (Shape shape : shapes) {
@@ -89,6 +103,10 @@ public class Controller implements ActionListener {
     }
   }
 
+
+  /**
+   * Control the model and view to runAnimation.
+   */
   private void runAnimation() {
     ArrayList<Shape> shapes = model.getShapes();
     for (Shape shape : shapes) {
@@ -114,19 +132,21 @@ public class Controller implements ActionListener {
         startHeight = start.getHeight();
         endHeight = end.getHeight();
 
+        duration = (endTime - startTime) * 100;
+
         taskPerformer = evt -> {
           view.run(startTime, startPoint, startWidth, startHeight, startColor, endTime, endPoint,
-              endWidth, endHeight, endColor, this);
+              endWidth, endHeight, endColor, name);
           txtView.run(startTime, startPoint, startWidth, startHeight, startColor, endTime, endPoint,
               endWidth, endHeight, endColor, name);
         };
-        tm = new Timer((endTime - startTime) * 100 / PaintPanel.RENDERTIMES, taskPerformer);
+        tm = new Timer(duration / PaintPanel.RENDERTIMES, taskPerformer);
         tm.start();
 
         this.create();
         this.appear();
-        view.init(new Point(startPoint.getX(), startPoint.getY()), startWidth, startHeight,
-            startColor, type);
+        view.create(startColor, type, name, new Point(startPoint.getX(), startPoint.getY()),
+            startWidth, startHeight);
 
         if (view.isFinish(endPoint, endWidth, endHeight, endColor)) {
           tm.stop();
@@ -134,7 +154,7 @@ public class Controller implements ActionListener {
           System.out.println("finish!!!!");
         }
         try {
-          Thread.sleep((endTime - startTime) * 100);
+          Thread.sleep(duration);
         } catch (InterruptedException e) {
           e.printStackTrace();
         }
@@ -148,11 +168,10 @@ public class Controller implements ActionListener {
     switch (e.getActionCommand()) {
       case "Start Button":
         System.out.println("start!!");
-        tm.restart();
+        duration /= 20;
         break;
       case "Pause Button":
-        tm.stop();
-        tm.removeActionListener(taskPerformer);
+        duration /= 10;
         break;
       case "Exit Button":
         System.exit(0);

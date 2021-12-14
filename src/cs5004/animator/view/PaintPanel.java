@@ -4,11 +4,10 @@ import cs5004.animator.model.Point;
 import cs5004.animator.model.ShapeType;
 import java.awt.Color;
 import java.awt.Graphics;
-import java.awt.event.ActionListener;
 import javax.swing.JPanel;
 
 /**
- * ActionListener should be in controller
+ * This class represents the PaintPanel.
  */
 public class PaintPanel extends JPanel implements Feature {
 
@@ -20,6 +19,11 @@ public class PaintPanel extends JPanel implements Feature {
   private ShapeType type;
   public static final int RENDERTIMES = 25;
 
+  /**
+   * Paint the component on the JPanel.
+   *
+   * @param g the Graphic object
+   */
   public void paintComponent(Graphics g) {
     super.paintComponent(g);
     g.setColor(curColor);
@@ -31,10 +35,25 @@ public class PaintPanel extends JPanel implements Feature {
 
   }
 
+
+  /**
+   * Run the animation of the shape in this view.
+   *
+   * @param startTime   the appearance time of this shape in this view
+   * @param startPoint  the startPoint of this shape in this view
+   * @param startWidth  the startWidth of this shape in this view
+   * @param startHeight the startHeight of this shape in this view
+   * @param startColor  the startColor of this shape in this view
+   * @param endTime     the endTime of this shape in this view
+   * @param endPoint    the endPoint of this shape in this view
+   * @param endWidth    the endWidth of this shape in this view
+   * @param endHeight   the endHeight of this shape in this view
+   * @param endColor    the endColor of this shape in this view
+   */
   public void runAnimation(int startTime, cs5004.animator.model.Point startPoint, int startWidth,
       int startHeight, Color startColor, int endTime, cs5004.animator.model.Point endPoint,
       int endWidth,
-      int endHeight, Color endColor, ActionListener timer) {
+      int endHeight, Color endColor) {
 
     if ((Math.abs(curX - endPoint.getX()) > 0.01 || Math.abs(curY - endPoint.getY()) > 0.01) && (
         startPoint.getX() != endPoint.getX() || startPoint.getY() != endPoint.getY())) {
@@ -55,6 +74,14 @@ public class PaintPanel extends JPanel implements Feature {
     }
   }
 
+
+  /**
+   * The animation feature of changeColor.
+   *
+   * @param startColor startColor of this animation
+   * @param endColor   duration of this animation
+   * @param duration   duration of this animation
+   */
   @Override
   public void changeColor(Color startColor, Color endColor, int duration) {
     int red =
@@ -74,6 +101,16 @@ public class PaintPanel extends JPanel implements Feature {
     repaint();
   }
 
+
+  /**
+   * The animation feature of scale width or height.
+   *
+   * @param startWidth  startWidth of this animation
+   * @param startHeight startHeight of this animation
+   * @param endWidth    endWidth of this animation
+   * @param endHeight   endHeight of this animation
+   * @param duration    duration of this animation
+   */
   @Override
   public void scale(int startWidth, int startHeight, int endWidth, int endHeight, int duration) {
     curWidth += (endWidth - startWidth) / RENDERTIMES;
@@ -81,6 +118,13 @@ public class PaintPanel extends JPanel implements Feature {
     repaint();
   }
 
+  /**
+   * The animation feature of move.
+   *
+   * @param startPoint startPoint of this animation
+   * @param endPoint   endPoint of this animation
+   * @param dur        duration of this animation
+   */
   @Override
   public void move(Point startPoint, Point endPoint, int dur) {
     if (curX < endPoint.getX() || curY < endPoint.getY()) {
@@ -90,6 +134,15 @@ public class PaintPanel extends JPanel implements Feature {
     }
   }
 
+  /**
+   * Paint the initial shape on this paintPanel.
+   *
+   * @param point  the position of this initial shape.
+   * @param width  the width of this initial shape.
+   * @param height the height of this initial shape.
+   * @param color  the color of this initial shape.
+   * @param type   the type of this initial shape.
+   */
   public void paintInit(Point point, int width, int height, Color color, ShapeType type) {
     curX = point.getX();
     curY = point.getY();
@@ -99,6 +152,15 @@ public class PaintPanel extends JPanel implements Feature {
     this.type = type;
   }
 
+  /**
+   * Return true if the animation is finished.
+   *
+   * @param endPoint  the end position of this shape in this view.
+   * @param endWidth  the end width of this shape in this view.
+   * @param endHeight the end height of this shape in this view.
+   * @param endColor  the end color of this shape in this view.
+   * @return true if the animation is finished.
+   */
   public boolean isFinish(Point endPoint, int endWidth, int endHeight, Color endColor) {
     return (Math.abs(curX - endPoint.getX()) <= 0.01 && Math.abs(curY - endPoint.getY()) <= 0.01)
         && (

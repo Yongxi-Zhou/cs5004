@@ -5,14 +5,32 @@ import cs5004.animator.model.ShapeType;
 import java.awt.Color;
 import java.io.IOException;
 
-public class TextView implements ITextView {
+/**
+ * This class represents TextView.
+ */
+public class TextView implements ITextView, IView {
 
   final Appendable out;
 
+  /**
+   * construct a TextView object.
+   *
+   * @param out the System.out of this TextView object.
+   */
   public TextView(Appendable out) {
     this.out = out;
   }
 
+  /**
+   * Create shape on this view.
+   *
+   * @param startColor  the color of the shape to be created.
+   * @param type        the type of the shape to be created.
+   * @param name        the name of the shape to be created.
+   * @param startCorner the corner of the shape to be created.
+   * @param startWidth  the width of the shape to be created.
+   * @param startHeight the height of the shape to be created.
+   */
   @Override
   public void create(Color startColor, ShapeType type, String name, Point startCorner,
       int startWidth, int startHeight) {
@@ -37,6 +55,13 @@ public class TextView implements ITextView {
     }
   }
 
+  /**
+   * Show the appearance and disappearence time of the textView object.
+   *
+   * @param appearName the shape name of this shape.
+   * @param startTime  the appearance name of this shape.
+   * @param endTime    the disappearence name of this shape.
+   */
   @Override
   public void appear(String appearName, int startTime, int endTime) {
     try {
@@ -48,6 +73,21 @@ public class TextView implements ITextView {
     }
   }
 
+  /**
+   * Run the animation of the shape in this view.
+   *
+   * @param startTime   the appearance time of this shape in this view
+   * @param startPoint  the startPoint of this shape in this view
+   * @param startWidth  the startWidth of this shape in this view
+   * @param startHeight the startHeight of this shape in this view
+   * @param startColor  the startColor of this shape in this view
+   * @param endTime     the endTime of this shape in this view
+   * @param endPoint    the endPoint of this shape in this view
+   * @param endWidth    the endWidth of this shape in this view
+   * @param endHeight   the endHeight of this shape in this view
+   * @param endColor    the endColor of this shape in this view
+   * @param name        the name of this shape in this view
+   */
   @Override
   public void run(int startTime, Point startPoint, int startWidth, int startHeight,
       Color startColor, int endTime, Point endPoint, int endWidth, int endHeight, Color endColor,
@@ -69,6 +109,16 @@ public class TextView implements ITextView {
     }
   }
 
+
+  /**
+   * The animation feature of changeColor.
+   *
+   * @param startColor startColor of this animation
+   * @param endColor   endColor of this animation
+   * @param startTime  startTime of this animation
+   * @param endTime    endTime of this animation
+   * @param name       name of this animation
+   */
   private void changeColor(Color startColor, Color endColor, int endTime, int startTime,
       String name) {
     try {
@@ -80,17 +130,35 @@ public class TextView implements ITextView {
     }
   }
 
+  /**
+   * The animation feature of scaleHeight.
+   *
+   * @param startHeight startHeight of this animation
+   * @param endHeight   endHeight of this animation
+   * @param startTime   startTime of this animation
+   * @param endTime     endTime of this animation
+   * @param name        name of this animation
+   */
   private void scaleHeight(int startHeight, int endHeight, int endTime, int startTime,
       String name) {
     try {
       this.out.append(
-          name + " changes height from " + startHeight + " to " + startHeight + " from time t="
+          name + " changes height from " + startHeight + " to " + endHeight + " from time t="
               + startTime + " to t=" + endTime + "\n");
     } catch (IOException e) {
       throw new IllegalStateException("Add output error");
     }
   }
 
+  /**
+   * The animation feature of scaleWidth.
+   *
+   * @param startWidth startWidth of this animation
+   * @param endWidth   endWidth of this animation
+   * @param startTime  startTime of this animation
+   * @param endTime    endTime of this animation
+   * @param name       name of this animation
+   */
   private void scaleWidth(int startWidth, int endWidth, int endTime, int startTime, String name) {
     try {
       this.out.append(
@@ -101,6 +169,15 @@ public class TextView implements ITextView {
     }
   }
 
+  /**
+   * The animation feature of move.
+   *
+   * @param startPoint startPoint of this animation
+   * @param endPoint   endPoint of this animation
+   * @param startTime  startTime of this animation
+   * @param endTime    endTime of this animation
+   * @param name       name of this animation
+   */
   private void move(Point startPoint, Point endPoint, int endTime, int startTime, String name) {
     try {
       this.out.append(
